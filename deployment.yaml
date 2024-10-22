@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: php-app
+  template:
+    metadata:
+      labels:
+        app: php-app
+    spec:
+      tolerations:
+      - key: "node.kubernetes.io/disk-pressure"
+        operator: "Exists"
+        effect: "NoSchedule"
+      containers:
+      - name: php-app
+        image: php:7.4-apache
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: php-app-volume
+          mountPath: /var/www/html
+      volumes:
+      - name: php-app-volume
+        configMap:
+          name: php-app-config
