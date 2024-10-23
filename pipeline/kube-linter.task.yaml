@@ -1,0 +1,26 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: kube-linter
+spec:
+  params:
+    - default: manifests/
+      description: Path to the Kubernetes manifests
+      name: manifest-path
+      type: string
+  steps:
+    - computeResources: {}
+      image: 'image-registry.openshift-image-registry.svc:5000/openshift/tools:latest'
+      name: lint
+      script: |
+        #!/usr/bin/env bash
+        # Install kube-linter
+        curl -L https://github.com/stackrox/kube-linter/releases/download/v0.6.8/kube-linter-linux.tar.gz | tar xz
+        mv kube-linter /usr/local/bin
+
+        # Run linting
+        kube-linter lint $(params.manifest-path)/*.yaml
+      workingDir: $(workspaces.source.path)
+  workspaces:
+    - description: The workspace containing the manifests to lint
+      name: source
