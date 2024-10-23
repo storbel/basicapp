@@ -1,0 +1,21 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: oc-apply
+spec:
+  params:
+    - default: manifests/
+      description: Path to the Kubernetes manifests
+      name: manifest-path
+      type: string
+  steps:
+    - computeResources: {}
+      image: 'image-registry.openshift-image-registry.svc:5000/openshift/cli:latest'
+      name: apply
+      script: |
+        #!/usr/bin/env bash
+        # Apply the manifests to current namespace
+        oc apply -f $(workspaces.source.path)/$(params.manifest-path)
+  workspaces:
+    - description: The workspace containing the manifests to deploy
+      name: source
