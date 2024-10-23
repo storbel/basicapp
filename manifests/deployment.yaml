@@ -12,30 +12,14 @@ spec:
       labels:
         app: php-app
     spec:
-
-      securityContext:
-        runAsUser: 1000
-        runAsNonRoot: true
-        fsGroup: 2000
       containers:
       - name: php-app
         image: registry.redhat.io/rhel9/php-81
-        securityContext:
-          readOnlyRootFilesystem: true
-          runAsUser: 1000
-          runAsNonRoot: true
         ports:
         - containerPort: 80
         volumeMounts:
         - name: php-app-volume
           mountPath: /var/www/html
-        resources:
-          requests:
-            cpu: "100m"
-            memory: "64Mi"
-          limits:
-            cpu: "500m"
-            memory: "128Mi"
       volumes:
       - name: php-app-volume
         configMap:
