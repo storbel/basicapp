@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: php-app
+  template:
+    metadata:
+      labels:
+        app: php-app
+    spec:
+      containers:
+      - name: php-app
+        image: registry.redhat.io/rhel9/php-81
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: php-app-volume
+          mountPath: /var/www/html
+      volumes:
+      - name: php-app-volume
+        configMap:
+          name: php-app-config
