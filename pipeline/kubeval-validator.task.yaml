@@ -1,0 +1,48 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: kubeval-validator
+spec:
+  params:
+    - default: manifests/
+      description: Path to the Kubernetes manifests
+      name: manifest-path
+      type: string
+    - default: 1.24.0
+      description: Kubernetes version to validate against
+      name: kubernetes-version
+      type: string
+  steps:
+    - computeResources: {}
+      image: 'image-registry.openshift-image-registry.svc:5000/openshift/tools:latest'
+      name: kubeval
+      script: |
+        #!/usr/bin/env bash
+        # Install kubeval
+        curl -L https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz | tar xz
+        mv kubeval /usr/local/bin
+
+        # Créer le répertoire pour les schémas
+        mkdir -p schemas
+
+        # Télécharger les schémas nécessaires
+        SCHEMA_DIR="schemas"
+        KUBE_VERSION=$(params.kubernetes-version)
+
+        # Utiliser le miroir de garethr pour les schémas
+        echo "Downloading schemas..."
+        for resource in configmap deployment service ingress namespace pod replicaset statefulset daemonset cronjob job persistentvolumeclaim secret serviceaccount role rolebinding clusterrole clusterrolebinding; do
+          curl -L -o "${SCHEMA_DIR}/${resource}.json" "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/master-standalone-strict/${resource}.json"
+        done
+
+        # Run validation with local schemas
+        echo "Running validation..."
+        kubeval --strict \
+          --kubernetes-version $(params.kubernetes-version) \
+          --schema-location "file://${PWD}/${SCHEMA_DIR}" \
+          --ignore-missing-schemas \
+          $(params.manifest-path)/*.yaml
+      workingDir: $(workspaces.source.path)
+  workspaces:
+    - description: The workspace containing the manifests to validate
+      name: source
