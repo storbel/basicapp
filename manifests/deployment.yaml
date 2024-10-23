@@ -19,7 +19,7 @@ spec:
         fsGroup: 2000
       containers:
       - name: php-app
-        image: php:7.4-apache
+        image: registry.redhat.io/rhel9/php-81
         securityContext:
           readOnlyRootFilesystem: true
           runAsUser: 1000
