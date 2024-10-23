@@ -5,5 +5,5 @@ metadata:
 data:
   index.php: |
     <?php
-    echo "Hello, OpenShift!";
+    echo "Hello, Tekton!";
     ?>
