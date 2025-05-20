@@ -21,11 +21,13 @@ spec:
         env:
         - name: APP_MESSAGE
           value: "Hello HPE!"
+        - name: DISPLAY_MESSAGE
+          value: "Deployed using ArgoCD Gitops"
         volumeMounts:
         - name: html-volume
           mountPath: /app
         securityContext:
-          runAsUser: 1000  # Required for OpenShift compatibility
+          runAsUser: 1000  
           allowPrivilegeEscalation: false
       volumes:
       - name: html-volume
