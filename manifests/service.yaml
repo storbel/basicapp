@@ -1,13 +1,11 @@
-# php-app-service.yaml
+# php-service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: php-app-service
-  labels:
-    app: php-app
+  name: php-service
 spec:
   ports:
-  - port: 8080
-    targetPort: 8080
+  - port: 80
+    targetPort: 80
   selector:
     app: php-app
