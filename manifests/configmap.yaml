@@ -19,7 +19,7 @@ data:
     </head>
     <body>
         <div class="container">
-            <h1>Welcome to PHP on OpenShift!</h1>
+            <h1><?php  echo getenv('APP_MESSAGE'); ?></h1>
             <div class="box">
                 <?php
                     echo "<p><strong>Hostname:</strong> " . gethostname() . "</p>";
