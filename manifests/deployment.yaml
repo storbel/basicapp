@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: php-app
-        image: php:8.2-apache  # Official Docker Hub image
+        image: ghcr.io/php:8.2-apache
         ports:
         - containerPort: 80
         env:
