@@ -1,10 +1,13 @@
+# php-app-route.yaml
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   name: php-app-route
+  labels:
+    app: php-app
 spec:
   to:
     kind: Service
     name: php-app-service
   port:
-    targetPort: 80
+    targetPort: 8080
