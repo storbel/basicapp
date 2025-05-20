@@ -23,7 +23,7 @@ spec:
           value: "Hello HPE!"
         volumeMounts:
         - name: html-volume
-          mountPath: /var/www/html
+          mountPath: /app
         securityContext:
           runAsUser: 1000  # Required for OpenShift compatibility
           allowPrivilegeEscalation: false
