@@ -1,7 +1,10 @@
+# php-app-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: php-app
+  labels:
+    app: php-app
 spec:
   replicas: 1
   selector:
@@ -12,31 +15,21 @@ spec:
       labels:
         app: php-app
     spec:
-
-      securityContext:
-        runAsUser: 1000
-        runAsNonRoot: true
-        fsGroup: 2000
       containers:
       - name: php-app
-        image: registry.access.redhat.com/ubi9/php-81
-        securityContext:
-          readOnlyRootFilesystem: true
-          runAsUser: 1000
-          runAsNonRoot: true
+        image: registry.access.redhat.com/ubi9/php-82  # Red Hat UBI PHP 8.2
         ports:
-        - containerPort: 80
+        - containerPort: 8080
+        env:
+        - name: DISPLAY_MESSAGE
+          value: "Hello from OpenShift PHP Pod!"
         volumeMounts:
-        - name: php-app-volume
-          mountPath: /var/www/html
-        resources:
-          requests:
-            cpu: "100m"
-            memory: "64Mi"
-          limits:
-            cpu: "500m"
-            memory: "128Mi"
+        - name: html-volume
+          mountPath: /opt/app-root/src
       volumes:
-      - name: php-app-volume
+      - name: html-volume
         configMap:
-          name: php-app-config
+          name: php-app-html
+      securityContext:
+        runAsUser: 1001  # UBI default non-root user
+        fsGroup: 0
