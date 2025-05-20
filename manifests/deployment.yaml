@@ -1,10 +1,8 @@
-# php-app-deployment.yaml
+# php-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: php-app
-  labels:
-    app: php-app
 spec:
   replicas: 1
   selector:
@@ -17,19 +15,21 @@ spec:
     spec:
       containers:
       - name: php-app
-        image: registry.access.redhat.com/ubi9/php-82  # Red Hat UBI PHP 8.2
+        image: php:8.2-apache  # Official Docker Hub image
         ports:
-        - containerPort: 8080
+        - containerPort: 80
         env:
-        - name: DISPLAY_MESSAGE
-          value: "Hello from OpenShift PHP Pod!"
+        - name: APP_MESSAGE
+          value: "Hello HPE!"
         volumeMounts:
         - name: html-volume
-          mountPath: /opt/app-root/src
+          mountPath: /var/www/html
+        securityContext:
+          runAsUser: 1000  # Required for OpenShift compatibility
+          allowPrivilegeEscalation: false
       volumes:
       - name: html-volume
         configMap:
           name: php-app-html
       securityContext:
-        runAsUser: 1001  # UBI default non-root user
-        fsGroup: 0
+        fsGroup: 1000  # Ensures file permissions work
